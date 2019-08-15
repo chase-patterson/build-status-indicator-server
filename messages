@@ -1,0 +1,35 @@
+PUB zigbee2mqtt/bridge/config/permit_join
+	"true"
+	"false"
+
+SUB zigbee2mqtt/bridge/log
+first time a device is connected:
+	{"type":"device_connected","message":"0x000b57fffe2efd78","meta":{"modelID":"TRADFRI bulb E26 opal 1000lm"}}
+everytime a connected device is seen while permit_join is true:
+	{"type":"pairing","message":"device incoming"}
+after devices/get:
+	{"type":"devices","message":[{"ieeeAddr":"0x00124b0019366ccb","type":"Coordinator"},{"ieeeAddr":"0x000b57fffe2efd78","type":"Router","model":"LED1622G12","friendly_name":"0x000b57fffe2efd78","nwkAddr":16126,"manufId":4476,"manufName":"IKEA of Sweden","powerSource":"Mains (single phase)","modelId":"TRADFRI bulb E26 opal 1000lm","hwVersion":1,"swBuildId":"1.1.1.0-5.7.2.0","dateCode":"20160919"}]}
+when a device doesn't reply:
+	{"type":"zigbee_publish_error","message":"Error: AF data request fails, status code: 233. MAC no ack.","meta":{"entity":{"ID":"0x000b57fffe2efd78","type":"device","friendlyName":"0x000b57fffe2efd78"},"message":"{ \"state\": \"ON\", \"brightness\": 1 }"}}
+
+
+
+
+
+SUB zigbee2mqtt/<lightbulb ID>
+	{"state":"ON","linkquality":155,"brightness":1}
+	{"state":"ON","linkquality":102,"brightness":1}
+
+PUB zigbee2mqtt/<lightbulb ID>/set
+	{ "state": "ON", "brightness": 255 }
+	{ "state": "ON", "brightness": 1 }
+	{ "state": "OFF" }
+
+
+
+
+PUB zigbee2mqtt/bridge/config/devices/get
+	""
+
+SUB zigbee2mqtt/bridge/config/devices
+	[{"ieeeAddr":"0x00124b0019366ccb","type":"Coordinator"},{"ieeeAddr":"0x000b57fffe2efd78","type":"Router","model":"LED1622G12","friendly_name":"0x000b57fffe2efd78","nwkAddr":16126,"manufId":4476,"manufName":"IKEA of Sweden","powerSource":"Mains (single phase)","modelId":"TRADFRI bulb E26 opal 1000lm","hwVersion":1,"swBuildId":"1.1.1.0-5.7.2.0","dateCode":"20160919"}]
