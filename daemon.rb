@@ -2,6 +2,7 @@ require 'singleton'
 require 'json'
 
 require_relative 'pipeline.rb'
+require_relative 'exceptions.rb'
 
 module BuildStatusIndicator
   class Daemon
@@ -20,6 +21,8 @@ module BuildStatusIndicator
       pipeline = Pipeline.new(props)
       @pipelines.push pipeline
 
+      # Start polling
+
       return pipeline
     end
 
@@ -28,19 +31,17 @@ module BuildStatusIndicator
         if props.include? 'id'
           pipeline.id == props['id']
         else
-          raise Exception, 'Must provide an ID to update pipeline'
+          raise BSIException, 'Must provide an ID to update pipeline'
         end
       end
 
       if pipeline.nil?
-        raise Exception, "Pipeline with given ID, not found"
+        raise BSIException, "Pipeline with given ID, not found"
       end
 
       # Stop polling
 
-      if props.include? 'jenkins_project_url'
-        pipeline.jenkins_project_url = props['jenkins_project_url']
-      end
+      pipeline.update props
 
       # Start polling
     end
@@ -50,7 +51,7 @@ module BuildStatusIndicator
         if props.include? 'id'
           pipeline.id == props['id']
         else
-          raise Exception, 'Must provide an ID to remove pipeline'
+          raise BSIException, 'Must provide an ID to remove pipeline'
         end
       end
 

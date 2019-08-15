@@ -2,6 +2,7 @@ require 'rack'
 require 'json'
 
 require_relative 'daemon.rb'
+require_relative 'exceptions.rb'
 
 module BuildStatusIndicator
   class APIApp
@@ -30,7 +31,7 @@ module BuildStatusIndicator
           begin
             Daemon.instance.update_pipeline pipeline
             [200, { 'Content-Type' => 'application/json' }, [""]]
-          rescue Exception => e
+          rescue BSIException => e
             [400, { 'Content-Type' => 'application/json' }, [{ 'error' => e.message }.to_json]]
           end
         elsif req.delete?
@@ -38,7 +39,7 @@ module BuildStatusIndicator
           begin
             Daemon.instance.remove_pipeline pipeline
             [200, { 'Content-Type' => 'application/json' }, [""]]
-          rescue Exception => e
+          rescue BSIException => e
             [400, { 'Content-Type' => 'application/json' }, [{ 'error' => e.message }.to_json]]
           end
         end

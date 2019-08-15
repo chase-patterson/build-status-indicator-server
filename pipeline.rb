@@ -1,7 +1,6 @@
 module BuildStatusIndicator
   class Pipeline
-    attr_reader :id
-    attr_accessor :jenkins_project_url
+    attr_reader :id, :jenkins_project_url
 
     def initialize props
       @id = self.hash.to_s
@@ -13,6 +12,9 @@ module BuildStatusIndicator
     end
 
     def update props
+      if props.include? 'jenkins_project_url'
+        @jenkins_project_url = props['jenkins_project_url']
+      end
     end
   end
 end
