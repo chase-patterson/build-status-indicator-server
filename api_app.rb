@@ -13,14 +13,18 @@ module BuildStatusIndicator
         if req.get?
           pipelines = Daemon.instance.pipelines
           pipeline_props = pipelines.collect do |pipeline|
-            { 'id' => pipeline.id,
-              'jenkins_project_url' => pipeline.jenkins_project_url }
+            {
+              'id' => pipeline.id,
+              'jenkins_project_url' => pipeline.jenkins_project_url
+            }
           end
           [200, { 'Content-Type' => 'application/json' }, [pipeline_props.to_json]]
         elsif req.post?
           pipeline = JSON.parse req.body.read
-          Daemon.instance.add_pipeline pipeline
-          [200, { 'Content-Type' => 'application/json' }, [""]]
+          pipeline_props = {
+            'id' => Daemon.instance.add_pipeline(pipeline).id
+          }
+          [200, { 'Content-Type' => 'application/json' }, [pipeline_props.to_json]]
         elsif req.put?
           pipeline = JSON.parse req.body.read
           Daemon.instance.update_pipeline pipeline

@@ -17,7 +17,10 @@ module BuildStatusIndicator
     attr_reader :pipelines, :indicators, :controllers
   
     def add_pipeline props
-      @pipelines.push Pipeline.new(props)
+      pipeline = Pipeline.new(props)
+      @pipelines.push pipeline
+
+      return pipeline
     end
 
     def update_pipeline props
