@@ -27,12 +27,20 @@ module BuildStatusIndicator
           [200, { 'Content-Type' => 'application/json' }, [pipeline_props.to_json]]
         elsif req.put?
           pipeline = JSON.parse req.body.read
-          Daemon.instance.update_pipeline pipeline
-          [200, { 'Content-Type' => 'application/json' }, [""]]
+          begin
+            Daemon.instance.update_pipeline pipeline
+            [200, { 'Content-Type' => 'application/json' }, [""]]
+          rescue Exception => e
+            [400, { 'Content-Type' => 'application/json' }, [{ 'error' => e.message }.to_json]]
+          end
         elsif req.delete?
           pipeline = JSON.parse req.body.read
-          Daemon.instance.remove_pipeline pipeline
-          [200, { 'Content-Type' => 'application/json' }, [""]]
+          begin
+            Daemon.instance.remove_pipeline pipeline
+            [200, { 'Content-Type' => 'application/json' }, [""]]
+          rescue Exception => e
+            [400, { 'Content-Type' => 'application/json' }, [{ 'error' => e.message }.to_json]]
+          end
         end
       when "/indicators"
         indicators = Daemon.instance.indicators

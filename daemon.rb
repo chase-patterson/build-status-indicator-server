@@ -28,12 +28,12 @@ module BuildStatusIndicator
         if props.include? 'id'
           pipeline.id == props['id']
         else
-          throw 'Must provide an ID to update pipeline'
+          raise Exception, 'Must provide an ID to update pipeline'
         end
       end
 
       if pipeline.nil?
-        throw "Pipeline with given ID, not found"
+        raise Exception, "Pipeline with given ID, not found"
       end
 
       # Stop polling
@@ -50,7 +50,7 @@ module BuildStatusIndicator
         if props.include? 'id'
           pipeline.id == props['id']
         else
-          throw 'Must provide an ID to delete pipeline'
+          raise Exception, 'Must provide an ID to remove pipeline'
         end
       end
 
