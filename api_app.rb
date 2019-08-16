@@ -47,7 +47,9 @@ module BuildStatusIndicator
         if req.get?
           indicators = Daemon.instance.indicators
           indicator_props = indicators.collect do |indicator|
-            { 'id': indicator.id }
+            { 'id': indicator.id,
+              'state': indicator.state,
+              'brightness': indicator.brightness }
           end
           [200, { 'Content-Type' => 'application/json' }, [indicator_props.to_json]]
         elsif req.put?

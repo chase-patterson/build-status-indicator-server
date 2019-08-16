@@ -4,6 +4,7 @@ require 'mqtt'
 
 require_relative 'pipeline.rb'
 require_relative 'device.rb'
+require_relative 'lightbulb.rb'
 require_relative 'exceptions.rb'
 
 module BuildStatusIndicator
@@ -43,7 +44,7 @@ module BuildStatusIndicator
         end
 
         devices = device_ids.collect do |device_id|
-          Device.new device_id
+          Lightbulb.new device_id
         end
 
         self.update_devices devices
@@ -114,11 +115,11 @@ module BuildStatusIndicator
       end
 
       if props.include? 'brightness'
-        indicator.set_brightness props['brightness']
+        indicator.brightness = props['brightness']
       end
 
       if props.include? 'state'
-        indicator.set_state props['state']
+        indicator.state = props['state']
       end
     end
 
