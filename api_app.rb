@@ -16,7 +16,10 @@ module BuildStatusIndicator
           pipeline_props = pipelines.collect do |pipeline|
             {
               'id' => pipeline.id,
-              'jenkins_project_url' => pipeline.jenkins_project_url
+              'jenkins_project_url' => pipeline.jenkins_project_url,
+              'linked_indicators' => pipeline.linked_indicators.collect do |indicator|
+                indicator.id
+              end
             }
           end
           [200, { 'Content-Type' => 'application/json' }, [pipeline_props.to_json]]

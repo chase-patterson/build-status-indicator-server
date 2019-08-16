@@ -138,6 +138,14 @@ module BuildStatusIndicator
 
       # Stop polling
 
+      if props.include? 'linked_indicators'
+        indicators = @indicators.select do |indicator|
+          props['linked_indicators'].include? indicator.id
+        end
+
+        props['linked_indicators'] = indicators
+      end
+
       pipeline.update props
 
       # Start polling
