@@ -3,6 +3,7 @@ require 'json'
 require 'mqtt'
 
 require_relative 'pipeline.rb'
+require_relative 'device.rb'
 require_relative 'exceptions.rb'
 
 module BuildStatusIndicator
@@ -12,7 +13,7 @@ module BuildStatusIndicator
     attr_reader :pipelines, :indicators, :controllers
   
     def initialize
-      @mqtt_broker_addr = '127.0.0.1'
+      @mqtt_broker_addr = '10.254.10.93'
 
       @pipelines = []
       @indicators = []
@@ -25,16 +26,30 @@ module BuildStatusIndicator
     end
 
     def get_devices
+      devices = []
       sub_client = nil
 
       sub_thread = Thread.new do
         sub_client = MQTT::Client.connect(@mqtt_broker_addr)
-        topic, message = sub_client.get 'zigbee2mqtt/bridge/config/devices'
+        topic, devices_json = sub_client.get 'zigbee2mqtt/bridge/config/devices'
         sub_client.disconnect
-        puts message
+
+        device_props = JSON.parse devices_json
+
+        device_ids = (device_props.select do |device|
+          device.include? 'friendly_name'
+        end).collect do |device|
+          device['friendly_name']
+        end
+
+        devices = device_ids.collect do |device_id|
+          Device.new device_id
+        end
+
+        self.update_devices devices
       end
 
-      Thread.new do
+      pub_thread = Thread.new do
         # Wait until our subscriber is really listening
         retries = 0
         while sub_client.nil? || !sub_client.connected?
@@ -51,6 +66,10 @@ module BuildStatusIndicator
           c.publish 'zigbee2mqtt/bridge/config/devices/get', ""
         end
       end
+    end
+
+    def update_devices devices
+      @indicators = devices
     end
 
     def start_sub_zigbee2mqtt_log
@@ -79,6 +98,28 @@ module BuildStatusIndicator
       # Start polling
 
       return pipeline
+    end
+
+    def update_indicator props
+      indicator = @indicators.find do |indicator|
+        if props.include? 'id'
+          indicator.id == props['id']
+        else
+          raise BSIException, 'Must provide an ID to update indicator'
+        end
+      end
+
+      if indicator.nil?
+        raise BSIException, "Indicator with given ID, not found"
+      end
+
+      if props.include? 'brightness'
+        indicator.set_brightness props['brightness']
+      end
+
+      if props.include? 'state'
+        indicator.set_state props['state']
+      end
     end
 
     def update_pipeline props

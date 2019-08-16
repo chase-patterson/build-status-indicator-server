@@ -44,8 +44,29 @@ module BuildStatusIndicator
           end
         end
       when "/indicators"
-        indicators = Daemon.instance.indicators
-        [200, { 'Content-Type' => 'application/json' }, [indicators.to_json]]
+        if req.get?
+          indicators = Daemon.instance.indicators
+          indicator_props = indicators.collect do |indicator|
+            { 'id': indicator.id }
+          end
+          [200, { 'Content-Type' => 'application/json' }, [indicator_props.to_json]]
+        elsif req.put?
+          indicator = JSON.parse req.body.read
+          begin
+            if indicator.include? 'state'
+              case indicator['state']
+              when 'on'
+                indicator['state'] = :on
+              when 'off'
+                indicator['state'] = :off
+              end
+            end
+            Daemon.instance.update_indicator indicator
+            [200, { 'Content-Type' => 'application/json' }, [""]]
+          rescue BSIException => e
+            [400, { 'Content-Type' => 'application/json' }, [{ 'error' => e.message }.to_json]]
+          end
+        end
       when "/controllers"
         controllers = Daemon.instance.controllers
         [200, { 'Content-Type' => 'application/json' }, [controllers.to_json]]
