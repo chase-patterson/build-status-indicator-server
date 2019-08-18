@@ -6,8 +6,8 @@ module BuildStatusIndicator
 
     def initialize id
       super
-      @brightness = 1
       @state = :off
+      @brightness = 1
     end
 
     def brightness=(brightness)

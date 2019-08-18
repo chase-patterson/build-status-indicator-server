@@ -17,8 +17,8 @@ module BuildStatusIndicator
             {
               'id' => pipeline.id,
               'jenkins_project_url' => pipeline.jenkins_project_url,
-              'associated_indicators' => pipeline.associated_indicators.collect do |indicator|
-                indicator.id
+              'indicator_associations' => pipeline.indicator_associations.collect do |assoc|
+                { 'id': assoc['indicator'].id, 'status': assoc['status'] }
               end
             }
           end

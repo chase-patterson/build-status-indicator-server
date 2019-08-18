@@ -37,14 +37,10 @@ module BuildStatusIndicator
 
         device_props = JSON.parse devices_json
 
-        device_ids = (device_props.select do |device|
+        devices = (device_props.select do |device|
           device.include? 'friendly_name'
         end).collect do |device|
-          device['friendly_name']
-        end
-
-        devices = device_ids.collect do |device_id|
-          Lightbulb.new device_id
+          Lightbulb.new device['friendly_name']
         end
 
         self.update_devices devices
@@ -138,12 +134,17 @@ module BuildStatusIndicator
 
       # Stop polling
 
-      if props.include? 'associated_indicators'
-        indicators = @indicators.select do |indicator|
-          props['associated_indicators'].include? indicator.id
+      if props.include? 'indicator_associations'
+        assocs = (props['indicator_associations'].collect do |assoc|
+          { 'indicator' => (@indicators.find do |indicator|
+              assoc['id'] == indicator.id
+            end),
+            'status' => assoc['status']}
+        end).reject do |assoc|
+          assoc['indicator'].nil?
         end
 
-        props['associated_indicators'] = indicators
+        props['indicator_associations'] = assocs
       end
 
       pipeline.update props
