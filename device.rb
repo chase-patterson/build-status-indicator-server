@@ -12,7 +12,6 @@ module BuildStatusIndicator
 
     def send_props props
       MQTT::Client.connect(@mqtt_broker_addr) do |c|
-        puts props.to_json
         c.publish "zigbee2mqtt/#{id}/set", props.to_json
       end
     end
