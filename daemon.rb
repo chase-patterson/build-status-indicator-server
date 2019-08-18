@@ -14,7 +14,7 @@ module BuildStatusIndicator
     attr_reader :pipelines, :indicators, :controllers
   
     def initialize
-      @mqtt_broker_addr = '10.254.10.93'
+      @mqtt_broker_addr = '192.168.43.185' #'10.254.10.93'
 
       @pipelines = []
       @indicators = []
@@ -138,12 +138,12 @@ module BuildStatusIndicator
 
       # Stop polling
 
-      if props.include? 'linked_indicators'
+      if props.include? 'associated_indicators'
         indicators = @indicators.select do |indicator|
-          props['linked_indicators'].include? indicator.id
+          props['associated_indicators'].include? indicator.id
         end
 
-        props['linked_indicators'] = indicators
+        props['associated_indicators'] = indicators
       end
 
       pipeline.update props

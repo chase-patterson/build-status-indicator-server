@@ -2,15 +2,15 @@ require 'net/http'
 
 module BuildStatusIndicator
   class Pipeline
-    attr_reader :id, :jenkins_project_url, :linked_indicators
+    attr_reader :id, :jenkins_project_url, :associated_indicators
 
     def initialize props
       @id = self.hash.to_s
 
-      if props.include? 'linked_indicators'
-        @linked_indicators = props['linked_indicators']
+      if props.include? 'associated_indicators'
+        @associated_indicators = props['associated_indicators']
       else
-        @linked_indicators = []
+        @associated_indicators = []
       end
 
       if props.include? 'jenkins_project_url'
@@ -25,8 +25,8 @@ module BuildStatusIndicator
         @jenkins_project_url = props['jenkins_project_url']
       end
 
-      if props.include? 'linked_indicators'
-        @linked_indicators = props['linked_indicators']
+      if props.include? 'associated_indicators'
+        @associated_indicators = props['associated_indicators']
       end
     end
 

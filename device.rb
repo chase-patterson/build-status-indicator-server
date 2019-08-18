@@ -6,7 +6,7 @@ module BuildStatusIndicator
     attr_reader :id
 
     def initialize id
-      @mqtt_broker_addr = '10.254.10.93'
+      @mqtt_broker_addr = '192.168.43.185' #'10.254.10.93'
       @id = id
     end
 
