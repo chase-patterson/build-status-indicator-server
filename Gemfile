@@ -1,0 +1,6 @@
+source 'https://rubygems.org'
+gem 'rack'
+gem 'rack-cors'
+gem 'thin'
+gem 'faye-websocket'
+gem 'mqtt'
